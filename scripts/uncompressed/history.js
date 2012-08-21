@@ -1623,17 +1623,11 @@
 						// Let's forward to replaceState
 						//History.debug('History.onPopState: state anchor', currentHash, currentState);
 						History.replaceState(currentState.data, currentState.title, currentState.url, false);
-					}
-					else {
-						// Traditional Anchor
-						//History.debug('History.onPopState: traditional anchor', currentHash);
-						History.Adapter.trigger(window,'anchorchange');
-						History.busy(false);
+						// We don't care for hashes
+						History.expectedStateId = false;
+						return false;
 					}
 
-					// We don't care for hashes
-					History.expectedStateId = false;
-					return false;
 				}
 
 				// Ensure
@@ -1655,6 +1649,20 @@
 
 				// The State did not exist in our store
 				if ( !newState ) {
+				
+					// if we have hash
+					if ( currentHash ) {
+						// Traditional Anchor
+						//History.debug('History.onPopState: traditional anchor', currentHash);
+						History.Adapter.trigger(window,'anchorchange');
+						History.busy(false);
+
+						// We don't care for hashes
+						History.expectedStateId = false;
+						return false;
+					}
+
+
 					// Regenerate the State
 					newState = History.createStateObject(null,null,document.location.href);
 				}
